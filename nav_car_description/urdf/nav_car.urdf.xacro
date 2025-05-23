@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="nar_car">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="nav_car">
 
-  <xacro:property name="package_name" value="nar_car_description"/>
-  <xacro:property name="robot_name" value="nar_car"/>
+  <xacro:property name="package_name" value="nav_car_description"/>
+  <xacro:property name="robot_name" value="nav_car"/>
 
   <xacro:include filename="$(find ${package_name})/urdf/include/common_macros.urdf.xacro" />
   
@@ -38,6 +38,6 @@
   </xacro:caster_wheel>
        
 
-  <!-- <xacro:include filename="$(find nav_car_description)/urdf/nar_car_gazebo_plugins.xacro"/>  -->
+  <!-- <xacro:include filename="$(find nav_car_description)/urdf/nav_car_gazebo_plugins.xacro"/>  -->
 
 </robot>

@@ -1,0 +1,31 @@
+base:
+  mass: 0.02
+  size:
+    x: 0.1
+    y: 0.1
+    z: 0.05
+  dx: 0.30 #-0.5 # Can we use variable inside yaml files? ${-base_length/2*0.69}
+  dy: 0.0
+  dz: 0.0
+  mesh: ''
+
+hub:
+  mass: 0.02
+  size:
+    x: 0.05
+    y: 0.15
+    z: 0.15
+  dx: 0.30 #-0.5 # Can we use variable inside yaml files? ${-base_length/2*0.69}
+  dy: 0.0
+  dz: 0
+  mesh: ''
+
+wheel:
+  #  <xacro:property name="caster_wheel_mass" value="0.5" /> <!-- in kg-->
+  mass: 0.5        # Wheel mass in Kg
+  radius: 0.10     # Wheel radius in m
+  length: 0.045      # Wheel length in m, considering is as a cylinder
+  mesh: ''          # Name of the mesh files. Leave it empty ('') to have a red wheel
+  dx: 0  # ${-caster_base_size/2.0*0.8}
+  dy: 0 
+  dz: -0.135 

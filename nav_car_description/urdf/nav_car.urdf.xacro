@@ -9,13 +9,17 @@
   <!-- <xacro:set_package_name /> -->
 
   <xacro:property name="back_wheel_yaml" value="$(find ${package_name})/config/${robot_name}/back_wheel.yaml" />
-  <xacro:property name="back_wheel_props" value="${load_yaml(back_wheel_yaml)}"/>
+  <xacro:property name="back_wheel_props" value="${xacro.load_yaml(back_wheel_yaml)}"/>
 
   <xacro:property name="front_wheel_yaml" value="$(find ${package_name})/config/${robot_name}/front_wheel.yaml" />
-  <xacro:property name="front_wheel_props" value="${load_yaml(front_wheel_yaml)}"/>
+  <xacro:property name="front_wheel_props" value="${xacro.load_yaml(front_wheel_yaml)}"/>
 
   <xacro:property name="base_yaml" value="$(find ${package_name})/config/${robot_name}/base.yaml" />
-  <xacro:property name="base_props" value="${load_yaml(base_yaml)}"/>
+  <xacro:property name="base_props" value="${xacro.load_yaml(base_yaml)}"/>
+
+  <xacro:property name="motor_yaml" value="$(find ${package_name})/config/${robot_name}/motor.yaml" />
+  <xacro:property name="motor_props" value="${xacro.load_yaml(motor_yaml)}"/>
+
 
   <!-- Base link -->
   <xacro:base base_prop="${base_props}" >
@@ -31,6 +35,18 @@
                       wheel_props="${back_wheel_props}"
                       base_props="${base_props}">
   </xacro:wheel>
+
+  <!-- Motors -->
+  <xacro:motor prefix="back_right" reflect="-1" 
+                      motor_props="${motor_props}"
+                      base_props="${base_props}" > 
+  </xacro:motor>
+
+  <xacro:motor prefix="back_left" reflect="1" 
+                      motor_props="${motor_props}"
+                      base_props="${base_props}" > 
+  </xacro:motor>
+
 
   <!-- Front Wheels -->
   <xacro:caster_wheel prefix="rear" reflect="-1"

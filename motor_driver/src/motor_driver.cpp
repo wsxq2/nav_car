@@ -113,6 +113,7 @@ int main(int argc, char** argv) {
                             ROS_WARN("Buffer overflow, clearing buffer.");
                             buffer.clear();
                         }
+                        ROS_WARN("Not enough data for a complete frame, waiting for more data...");
                         break; // 不够一帧
                     }
 
@@ -124,7 +125,7 @@ int main(int argc, char** argv) {
                     int16_t motor_left = (recv_buf[5] << 8) | recv_buf[6];
                     int16_t motor_right = (recv_buf[7] << 8) | recv_buf[8];
                     uint16_t crc_recv = (recv_buf[9] << 8) | recv_buf[10];
-                    uint16_t crc_calc = crc16_modbus_rtu(&recv_buf[0], RECV_FRAME_LEN - 2);
+                    uint16_t crc_calc = crc16_modbus_rtu(&recv_buf[2], RECV_FRAME_LEN - 2 -2);
 
                     if (head == FRAME_HEAD && len == RECV_FRAME_LEN && cmd == CMD_STATUS_QUERY && crc_recv == crc_calc) {
                         sensor_msgs::JointState msg;
@@ -159,10 +160,11 @@ int main(int argc, char** argv) {
                         send_buf[6] = left_rpm & 0xFF;
                         send_buf[7] = (right_rpm >> 8) & 0xFF;
                         send_buf[8] = right_rpm & 0xFF;
-                        uint16_t crc = crc16_modbus_rtu(&send_buf[0], SEND_FRAME_LEN - 2);
+                        uint16_t crc = crc16_modbus_rtu(&send_buf[2], SEND_FRAME_LEN - 2 - 2);
                         send_buf[9] = (crc >> 8) & 0xFF;
                         send_buf[10] = crc & 0xFF;
                         boost::asio::write(socket, boost::asio::buffer(send_buf, SEND_FRAME_LEN));
+                        ROS_INFO("Sending control command: left_rpm=%d, right_rpm=%d", left_rpm, right_rpm);
                     } else {
                         ROS_WARN("Invalid frame received: head=0x%04X, len=%d, cmd=0x%02X, crc_recv=0x%04X, crc_calc=0x%04X",
                                  head, len, cmd, crc_recv, crc_calc);

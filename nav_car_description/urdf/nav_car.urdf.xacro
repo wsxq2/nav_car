@@ -20,6 +20,8 @@
   <xacro:property name="motor_yaml" value="$(find ${package_name})/config/${robot_name}/motor.yaml" />
   <xacro:property name="motor_props" value="${xacro.load_yaml(motor_yaml)}"/>
 
+  <!-- Footprint link -->
+  <xacro:footprint wheel_props="${back_wheel_props}" />
 
   <!-- Base link -->
   <xacro:base base_prop="${base_props}" >

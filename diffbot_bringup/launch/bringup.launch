@@ -1,6 +1,6 @@
 <launch>
     <!--arg name="model" default="$(env DIFFBOT_MODEL)" doc="model type [diffbot, remo]"/-->
-    <arg name="model" default="diffbot" doc="model type [diffbot, remo]"/>
+    <arg name="model" default="nav_car" doc="model type [diffbot, remo, nav_car]"/>
     
     <!-- The `minimal.launch` is used to load the DiffBot's robot descripton
         and the controller configuration onto the ROS parameter server using the launch file from the 

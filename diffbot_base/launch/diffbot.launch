@@ -3,7 +3,7 @@
     <!--arg name="model" default="$(env DIFFBOT_MODEL)" doc="model type [diffbot, remo]"/-->
     <arg name="model" default="nav_car" doc="model type [diffbot, remo, nav_car]"/>
     <arg name="description_package" default="$(eval find(arg('model') + '_description'))" />
-    <arg name="urdf_file" default="$(find xacro)/xacro '$(arg description_package)/urdf/$(arg model).urdf.xacro'" />
+    <arg name="urdf_file" default="$(find xacro)/xacro --inorder '$(arg description_package)/urdf/$(arg model).urdf.xacro'" />
 
     <!-- Load the URDF model of DiffBot into the ROS Parameter Server -->
     <param name="diffbot/robot_description" command="$(arg urdf_file)" />

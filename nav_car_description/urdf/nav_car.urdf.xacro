@@ -5,6 +5,7 @@
   <xacro:property name="robot_name" value="nav_car"/>
 
   <xacro:include filename="$(find ${package_name})/urdf/include/common_macros.urdf.xacro" />
+  <xacro:include filename="$(find ${package_name})/urdf/include/common_sensors.xacro" />
   
   <!-- <xacro:set_package_name /> -->
 
@@ -19,6 +20,9 @@
 
   <xacro:property name="motor_yaml" value="$(find ${package_name})/config/${robot_name}/motor.yaml" />
   <xacro:property name="motor_props" value="${xacro.load_yaml(motor_yaml)}"/>
+
+  <xacro:property name="sensor_yaml" value="$(find ${package_name})/config/${robot_name}/sensors.yaml" />
+  <xacro:property name="sensor_prop" value="${xacro.load_yaml(sensor_yaml)}"/>
 
   <!-- Footprint link -->
   <xacro:footprint wheel_props="${back_wheel_props}" />
@@ -49,6 +53,11 @@
                       base_props="${base_props}" > 
   </xacro:motor>
 
+  <!-- Sensors -->
+  <xacro:laser prefix="lslidar" parent_link="base_link"
+                   sensor_prop="${sensor_prop}"
+                   enable_gpu="${sensor_prop['laser']['enable_gpu']}">
+  </xacro:laser>
 
   <!-- Front Wheels -->
   <xacro:caster_wheel prefix="rear" reflect="-1"

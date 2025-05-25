@@ -1,6 +1,6 @@
 <launch>
   <!-- Arguments -->
-  <arg name="model" default="diffbot" doc="model type [diffbot, remo]"/>
+  <arg name="model" default="nav_car" doc="model type [diffbot, remo, nav_car]"/>
   <arg name="map_file" default="$(find diffbot_navigation)/maps/office.yaml"/>
   <arg name="open_rviz" default="true"/>
   <arg name="rvizconfig" default="$(find diffbot_navigation)/rviz/diffbot_navigation.rviz" />

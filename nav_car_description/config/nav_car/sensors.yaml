@@ -1,12 +1,12 @@
 laser:
-  mass: 0.1          # Motor mass in Kg
-  radius: 0.015     # Wheel radius in m
-  length: 0.01      # Wheel length in m, considering is as a cylinder
+  mass: 0.5          # Motor mass in Kg
+  radius: 0.0391     # Wheel radius in m
+  length: 0.039      # Wheel length in m, considering is as a cylinder
   mesh: ''  # Name of the mesh files. Leave it empty ('') to have a red wheel
   #mesh: ''
-  dx: 0.0
+  dx: -0.105
   dy: 0.0
-  dz: 0.15
+  dz: 0.156
   angular_range:
     min: -3.1415
     max: 3.1415

@@ -183,7 +183,7 @@ private:
                 uint16_t crc = crc16_modbus_rtu(&send_buf[2], SEND_FRAME_LEN - 2 - 2);
                 send_buf[9] = (crc >> 8) & 0xFF;
                 send_buf[10] = crc & 0xFF;
-                ROS_INFO("Sending control command: left_rpm=%d, right_rpm=%d", left_rpm, right_rpm);
+                ROS_INFO_THROTTLE(1, "Sending control command: left_rpm=%d, right_rpm=%d", left_rpm, right_rpm);
                 async_write(send_buf, SEND_FRAME_LEN);
             } else {
                 ROS_WARN("Invalid frame received: head=0x%04X, len=%d, cmd=0x%02X, crc_recv=0x%04X, crc_calc=0x%04X",

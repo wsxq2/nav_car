@@ -144,6 +144,10 @@ private:
             }
 
             status_query_frame_t frame = *(reinterpret_cast<status_query_frame_t*>(buffer_.data() + pos));
+
+            //NOTE: need calculate crc16 before converting to host byte order
+            uint16_t crc_calc = crc16_modbus_rtu(reinterpret_cast<uint8_t*>(&frame) + 2, sizeof(status_query_frame_t) - 2 - 2);
+
             frame.head = ntohs(frame.head);
             frame.length = ntohs(frame.length);
             frame.motor_left = ntohl(frame.motor_left);
@@ -151,8 +155,6 @@ private:
             frame.pos_left = ntohl(frame.pos_left);
             frame.pos_right = ntohl(frame.pos_right);
             frame.crc16 = ntohs(frame.crc16);
-
-            uint16_t crc_calc = crc16_modbus_rtu(reinterpret_cast<uint8_t*>(&frame) + 2, sizeof(status_query_frame_t) - 2 - 2);
 
             if (frame.head == FRAME_HEAD && frame.length == sizeof(status_query_frame_t) && frame.cmd == CMD_STATUS_QUERY && frame.crc16 == crc_calc) {
                 // 计算实际dt

@@ -55,7 +55,7 @@ uint16_t crc16_modbus_rtu(const uint8_t* buf, uint16_t buflen)
 
 // uint is 0.001rpm
 int32_t rad_to_rpm(float rad) {
-    return static_cast<int32_t>(rad * 60.0 / (2.0 * M_PI)) * 1000;
+    return static_cast<int32_t>(rad * 1000.0 * 60.0 / (2.0 * M_PI));
 }
 
 // unit is 0.001rpm

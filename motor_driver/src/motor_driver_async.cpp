@@ -13,11 +13,29 @@
 #define FRAME_HEAD 0x55AA
 #define CMD_STATUS_QUERY 0x02
 #define CMD_MOTION_CTRL  0x01
-#define RECV_FRAME_LEN 11
-#define SEND_FRAME_LEN 11
 #define RECV_BUFFER_MAX_LEN 4096
 
 using boost::asio::ip::tcp;
+
+typedef struct __attribute__((packed)) {
+    uint16_t head; // 帧头
+    uint16_t length; // 帧长
+    uint8_t cmd; // 命令
+    int32_t motor_left; // 左电机转速，单位为 0.001rpm
+    int32_t motor_right; // 右电机转速，单位为 0.001rpm
+    uint16_t crc16; // 校验
+} motion_control_frame_t;
+
+typedef struct __attribute__((packed)) {
+    uint16_t head; // 帧头
+    uint16_t length; // 帧长
+    uint8_t cmd; // 命令
+    int32_t motor_left; // 左电机转速，单位为 0.001rpm
+    int32_t motor_right; // 右电机转速，单位为 0.001rpm
+    int32_t pos_left; // 左电机里程，单位为 0.001度
+    int32_t pos_right; // 右电机里程，单位为 0.001度 
+    uint16_t crc16; // 校验
+} status_query_frame_t;
 
 uint16_t crc16_modbus_rtu(const uint8_t* buf, uint16_t buflen)
 {
@@ -35,12 +53,14 @@ uint16_t crc16_modbus_rtu(const uint8_t* buf, uint16_t buflen)
     return crc;
 }
 
-int16_t rad_to_rpm(float rad) {
-    return static_cast<int16_t>(rad * 60.0 / (2.0 * M_PI));
+// uint is 0.001rpm
+int32_t rad_to_rpm(float rad) {
+    return static_cast<int32_t>(rad * 60.0 / (2.0 * M_PI)) * 1000;
 }
 
-float rpm_to_rad(int16_t rpm) {
-    return rpm * (2.0 * M_PI) / 60.0;
+// unit is 0.001rpm
+float rpm_to_rad(int32_t rpm) {
+    return rpm * (2.0 * M_PI) / 60.0 / 1000.0;
 }
 
 class MotorDriverAsync {
@@ -107,14 +127,14 @@ private:
     }
 
     void process_buffer() {
-        while (buffer_.size() >= RECV_FRAME_LEN) {
+        while (buffer_.size() >= sizeof(status_query_frame_t)) {
             // 查找帧头（大端）
             size_t pos = 0;
             for (; pos + 1 < buffer_.size(); ++pos) {
                 if (buffer_[pos] == ((FRAME_HEAD >> 8) & 0xFF) && buffer_[pos + 1] == (FRAME_HEAD & 0xFF))
                     break;
             }
-            if (pos + RECV_FRAME_LEN > buffer_.size()) {
+            if (pos + sizeof(status_query_frame_t) > buffer_.size()) {
                 if (buffer_.size() > RECV_BUFFER_MAX_LEN) {
                     ROS_WARN("Buffer overflow, clearing buffer.");
                     buffer_.clear();
@@ -123,16 +143,18 @@ private:
                 break;
             }
 
-            uint8_t* recv_buf = buffer_.data() + pos;
-            uint16_t head = (recv_buf[0] << 8) | recv_buf[1];
-            uint16_t len = (recv_buf[2] << 8) | recv_buf[3];
-            uint8_t cmd = recv_buf[4];
-            int16_t motor_left = (recv_buf[5] << 8) | recv_buf[6];
-            int16_t motor_right = (recv_buf[7] << 8) | recv_buf[8];
-            uint16_t crc_recv = (recv_buf[9] << 8) | recv_buf[10];
-            uint16_t crc_calc = crc16_modbus_rtu(&recv_buf[2], RECV_FRAME_LEN - 2 -2);
+            status_query_frame_t frame = *(reinterpret_cast<status_query_frame_t*>(buffer_.data() + pos));
+            frame.head = ntohs(frame.head);
+            frame.length = ntohs(frame.length);
+            frame.motor_left = ntohl(frame.motor_left);
+            frame.motor_right = ntohl(frame.motor_right);
+            frame.pos_left = ntohl(frame.pos_left);
+            frame.pos_right = ntohl(frame.pos_right);
+            frame.crc16 = ntohs(frame.crc16);
 
-            if (head == FRAME_HEAD && len == RECV_FRAME_LEN && cmd == CMD_STATUS_QUERY && crc_recv == crc_calc) {
+            uint16_t crc_calc = crc16_modbus_rtu(reinterpret_cast<uint8_t*>(&frame) + 2, sizeof(status_query_frame_t) - 2 - 2);
+
+            if (frame.head == FRAME_HEAD && frame.length == sizeof(status_query_frame_t) && frame.cmd == CMD_STATUS_QUERY && frame.crc16 == crc_calc) {
                 // 计算实际dt
                 ros::Time now = ros::Time::now();
                 double dt = (now - last_time_).toSec();
@@ -148,8 +170,8 @@ private:
                 msg.name[0] = "left_wheel";
                 msg.name[1] = "right_wheel";
                 msg.velocity.resize(2);
-                float rad_left = rpm_to_rad(motor_left);
-                float rad_right = rpm_to_rad(motor_right);
+                float rad_left = rpm_to_rad(frame.motor_left);
+                float rad_right = rpm_to_rad(frame.motor_right);
                 msg.velocity[0] = rad_left;
                 msg.velocity[1] = rad_right;
                 msg.position.resize(2);
@@ -158,6 +180,10 @@ private:
                 msg.position[0] = pos_left_;
                 msg.position[1] = pos_right_;
                 encoder_pub_.publish(msg);
+                ROS_INFO_THROTTLE(1, "received frame: left_rpm=%d, right_rpm=%d, left_pos=%d, right_pos=%d, calc_left_pos=%f, calc_right_pos=%f",
+                                  frame.motor_left, frame.motor_right,
+                                  frame.pos_left, frame.pos_right,
+                                  pos_left_ * 180 * 1000 / M_PI, pos_right_ * 180 * 1000 / M_PI);
 
                 // 读取命令时加锁
                 float left_cmd, right_cmd;
@@ -168,29 +194,26 @@ private:
                 }
 
                 // 发送运动控制帧
-                int16_t left_rpm = rad_to_rpm(left_cmd);
-                int16_t right_rpm = rad_to_rpm(right_cmd);
-                uint8_t send_buf[SEND_FRAME_LEN] = {0};
-                send_buf[0] = (FRAME_HEAD >> 8) & 0xFF;
-                send_buf[1] = FRAME_HEAD & 0xFF;
-                send_buf[2] = (SEND_FRAME_LEN >> 8) & 0xFF;
-                send_buf[3] = SEND_FRAME_LEN & 0xFF;
-                send_buf[4] = CMD_MOTION_CTRL;
-                send_buf[5] = (left_rpm >> 8) & 0xFF;
-                send_buf[6] = left_rpm & 0xFF;
-                send_buf[7] = (right_rpm >> 8) & 0xFF;
-                send_buf[8] = right_rpm & 0xFF;
-                uint16_t crc = crc16_modbus_rtu(&send_buf[2], SEND_FRAME_LEN - 2 - 2);
-                send_buf[9] = (crc >> 8) & 0xFF;
-                send_buf[10] = crc & 0xFF;
-                ROS_INFO_THROTTLE(1, "Sending control command: left_rpm=%d, right_rpm=%d", left_rpm, right_rpm);
-                async_write(send_buf, SEND_FRAME_LEN);
+                int32_t left_rpm = rad_to_rpm(left_cmd);
+                int32_t right_rpm = rad_to_rpm(right_cmd);
+                motion_control_frame_t send_frame;
+                send_frame.head = htons(FRAME_HEAD);
+                send_frame.length = htons(sizeof(motion_control_frame_t));
+                send_frame.cmd = CMD_MOTION_CTRL;
+                send_frame.motor_left = htonl(left_rpm);
+                send_frame.motor_right = htonl(right_rpm);
+                send_frame.crc16 = htons(crc16_modbus_rtu(reinterpret_cast<uint8_t*>(&send_frame) + 2, sizeof(motion_control_frame_t) - 2 - 2));
+
+                ROS_INFO_THROTTLE(1, "Sending control command(0.001rpm): left_rpm=%d, right_rpm=%d", left_rpm, right_rpm);
+                async_write(reinterpret_cast<uint8_t*>(&send_frame), sizeof(motion_control_frame_t));
+                // 移除已处理数据
+                buffer_.erase(buffer_.begin(), buffer_.begin() + pos + sizeof(status_query_frame_t));
             } else {
                 ROS_WARN("Invalid frame received: head=0x%04X, len=%d, cmd=0x%02X, crc_recv=0x%04X, crc_calc=0x%04X",
-                         head, len, cmd, crc_recv, crc_calc);
+                         frame.head, frame.length, frame.cmd, frame.crc16, crc_calc);
+                // 只移除帧头及其之前的数据
+                buffer_.erase(buffer_.begin(), buffer_.begin() + pos + 2);
             }
-            // 移除已处理数据
-            buffer_.erase(buffer_.begin(), buffer_.begin() + pos + RECV_FRAME_LEN);
         }
     }
 

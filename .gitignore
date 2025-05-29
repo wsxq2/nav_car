@@ -53,3 +53,5 @@ docs/plots
 
 # intermediate documentation
 site
+diffbot_navigation/maps/office_out.pgm
+diffbot_navigation/maps/office_out.yaml

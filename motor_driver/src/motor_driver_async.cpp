@@ -7,6 +7,7 @@
 #include <diffbot_msgs/WheelsCmdStamped.h>
 #include <sensor_msgs/JointState.h>
 #include <mutex>
+#include <std_msgs/Empty.h>
 
 #define TCP_IP "0.0.0.0"
 #define TCP_PORT 3011
@@ -23,6 +24,7 @@ typedef struct __attribute__((packed)) {
     uint8_t cmd; // 命令
     int32_t motor_left; // 左电机转速，单位为 0.001rpm
     int32_t motor_right; // 右电机转速，单位为 0.001rpm
+    uint8_t reset_odom; // 是否复位里程计，0: 不复位，1: 复位
     uint16_t crc16; // 校验
 } motion_control_frame_t;
 
@@ -76,6 +78,8 @@ public:
         encoder_pub_ = nh.advertise<sensor_msgs::JointState>("measured_joint_states", 10);
         sub_wheel_ = nh.subscribe<diffbot_msgs::WheelsCmdStamped>("wheel_cmd_velocities", 10,
             &MotorDriverAsync::wheelCmdCallback, this);
+        sub_reset_odom_ = nh.subscribe<std_msgs::Empty>("reset_odom", 10,
+            &MotorDriverAsync::resetOdomCallback, this);
         last_time_ = ros::Time::now();
         start_accept();
         io_thread_ = std::thread([this]() { io_service_.run(); });
@@ -90,10 +94,20 @@ private:
     // 添加互斥锁
     std::mutex cmd_mutex_;
 
+    ros::Subscriber sub_reset_odom_;
+
     void wheelCmdCallback(const diffbot_msgs::WheelsCmdStamped::ConstPtr& msg) {
         std::lock_guard<std::mutex> lock(cmd_mutex_);
         left_cmd_ = msg->wheels_cmd.angular_velocities.joint[0];
         right_cmd_ = msg->wheels_cmd.angular_velocities.joint[1];
+    }
+
+    void resetOdomCallback(const std_msgs::Empty::ConstPtr&) {
+        std::lock_guard<std::mutex> lock(cmd_mutex_);
+        reset_odom_ = true;
+        pos_left_ = 0;
+        pos_right_ = 0;
+        ROS_INFO("Received odom reset request.");
     }
 
     void start_accept() {
@@ -179,8 +193,8 @@ private:
                 msg.position.resize(2);
                 pos_left_ += rad_left * dt;
                 pos_right_ += rad_right * dt;
-                msg.position[0] = pos_left_;
-                msg.position[1] = pos_right_;
+                msg.position[0] = frame.pos_left * M_PI / 180.0 / 1000.0;
+                msg.position[1] = frame.pos_right * M_PI / 180.0 / 1000.0;
                 encoder_pub_.publish(msg);
                 ROS_INFO_THROTTLE(1, "received frame: left_rpm=%d, right_rpm=%d, left_pos=%d, right_pos=%d, calc_left_pos=%f, calc_right_pos=%f",
                                   frame.motor_left, frame.motor_right,
@@ -204,6 +218,8 @@ private:
                 send_frame.cmd = CMD_MOTION_CTRL;
                 send_frame.motor_left = htonl(left_rpm);
                 send_frame.motor_right = htonl(right_rpm);
+                send_frame.reset_odom = reset_odom_ ? 1 : 0;
+                reset_odom_ = false;
                 send_frame.crc16 = htons(crc16_modbus_rtu(reinterpret_cast<uint8_t*>(&send_frame) + 2, sizeof(motion_control_frame_t) - 2 - 2));
 
                 ROS_INFO_THROTTLE(1, "Sending control command(0.001rpm): left_rpm=%d, right_rpm=%d", left_rpm, right_rpm);
@@ -242,6 +258,7 @@ private:
     float left_cmd_, right_cmd_;
     ros::Time last_time_;
     std::thread io_thread_;
+    bool reset_odom_ = false; // 是否复位里程计，默认不复位
 };
 
 int main(int argc, char** argv) {

@@ -64,8 +64,10 @@
                    enable_gpu="${sensor_prop['laser']['enable_gpu']}">
   </xacro:laser>
 
-  <!-- 调用 imu_sensor 宏 -->
-  <xacro:imu_sensor joint_origin="${imu_joint_origin}" parent_link="base_link" sensor_prop="${sensor_prop}" />
+  <!-- 正确调用 imu_sensor 宏 -->
+  <!-- <xacro:imu_sensor parent_link="base_link" sensor_prop="${sensor_prop}">
+    <origin xyz="0 0 0.1" rpy="0 0 0"/>
+  </xacro:imu_sensor> -->
 
   <!-- Front Wheels -->
   <xacro:caster_wheel prefix="rear" reflect="-1"

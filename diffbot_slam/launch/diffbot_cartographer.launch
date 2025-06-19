@@ -20,8 +20,9 @@
     args="-configuration_directory $(find diffbot_slam)/config
           -configuration_basename $(arg configuration_basename)"
       output="screen">
-    <remap from="imu" to="diffbot/imu/data" />
-    <remap from="odom" to="diffbot/odometry/filtered" />
+    <!-- <remap from="imu" to="diffbot/imu/data" /> -->
+    <remap from="scan" to="/diffbot/scan" />
+    <remap from="odom" to="/diffbot/mobile_base_controller/odom" />
   </node>
 
   <!-- cartographer_occupancy_grid_node -->

@@ -14,11 +14,20 @@
 <launch>
   <!-- Arguments -->
   <arg name="configuration_basename" default="diffbot_lds_2d.lua"/>
+  <arg name="state_filename" default="/home/wsxq2/work/nav_car_ws/office.pbstream"/>
+
+  <!-- <node name="set_initpose_from_rviz" pkg="cartographer_ros" type="set_initpose_from_rviz" 
+    args="-configuration_directory $(find diffbot_slam)/config
+          -configuration_basename $(arg configuration_basename)
+          -load_state_filename $(arg state_filename)"
+    output="screen">
+    </node> -->
 
   <!-- Run cartographer node -->
   <node name="cartographer_node" pkg="cartographer_ros" type="cartographer_node" 
     args="-configuration_directory $(find diffbot_slam)/config
-          -configuration_basename $(arg configuration_basename)"
+          -configuration_basename $(arg configuration_basename) 
+          -load_state_filename $(arg state_filename)"
       output="screen">
     <!-- <remap from="imu" to="diffbot/imu/data" /> -->
     <remap from="scan" to="/diffbot/scan" />

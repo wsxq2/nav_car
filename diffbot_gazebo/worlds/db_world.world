@@ -33,7 +33,7 @@
 
     <!-- Load world -->
     <include>
-      <uri>model://db_world</uri>
+      <uri>model://custom</uri>
     </include>
 
     <scene>

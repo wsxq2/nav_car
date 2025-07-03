@@ -6,6 +6,7 @@
 
   <xacro:include filename="$(find ${package_name})/urdf/include/common_macros.urdf.xacro" />
   <xacro:include filename="$(find ${package_name})/urdf/include/common_sensors.xacro" />
+  <xacro:include filename="$(find ${package_name})/urdf/include/robot.gazebo.xacro" />
   
   <!-- <xacro:set_package_name /> -->
 
@@ -76,5 +77,11 @@
        
 
   <!-- <xacro:include filename="$(find nav_car_description)/urdf/nav_car_gazebo_plugins.xacro"/>  -->
+
+  <!-- Gazebo -->
+  <xacro:gazebo_ros_control robotNamespace="/diffbot">
+  </xacro:gazebo_ros_control>
+
+  <!-- <xacro:set_all_wheel_frictions /> -->
 
 </robot>

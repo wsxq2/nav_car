@@ -1,7 +1,8 @@
 <launch>
-    <arg name="model" />
+    <arg name="model" default="nav_car" doc="model type [diffbot, remo, nav_car]"/>
+    <arg name="description_package" default="$(eval find(arg('model') + '_description'))" />
     <!-- Parsing xacro and setting robot_description parameter -->
-    <param name="robot_description" command="$(find xacro)/xacro $(find diffbot_description)/urdf/diffbot.urdf.xacro" />
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(arg description_package)/urdf/$(arg model).urdf.xacro'" />
     <!-- Setting gui parameter to true for display joint slider -->
     <!-- param name="use_gui" value="true"/ -->
     <!-- Starting Joint state publisher node which will publish the joint values -->

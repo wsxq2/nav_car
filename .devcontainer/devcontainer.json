@@ -1,0 +1,32 @@
+{
+    "name": "NavCar ROS2 DevContainer",
+    "dockerComposeFile": [
+        "../docker/docker-compose.yaml"
+    ],
+    "service": "navcar-dev",
+    "workspaceFolder": "/home/dev/workspace",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "http.proxy": "http://192.168.3.107:7890",
+                "http.proxyStrictSSL": false,
+                "clangd.path": "/usr/local/bin/clangd",
+                "C_Cpp.intelliSenseEngine": "disabled",
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash",
+                        "args": [
+                            "-l"
+                        ]
+                    }
+                }
+            },
+            "extensions": [
+                "ms-vscode.cmake-tools",
+                "ms-iot.vscode-ros",
+                "llvm-vs-code-extensions.vscode-clangd"
+            ],
+        },
+    },
+}

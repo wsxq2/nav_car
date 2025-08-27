@@ -1,0 +1,28 @@
+services:
+  navcar-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PROXY_HOST=${PROXY_HOST:-host.docker.internal}
+        - PROXY_PORT=${PROXY_PORT:-7890}
+        - USER_UID=${USER_UID:-1000}
+    image: navcar-dev:latest
+    container_name: navcar-dev
+    
+    # Enable GUI applications (for RViz, etc.)
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - XAUTHORITY=/tmp/.docker.xauth
+    volumes:
+      # X11 forwarding for GUI applications
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+
+      - ../:/home/dev/workspace:rw
+    network_mode: host
+    tty: true
+    stdin_open: true
+    privileged: true
+    user: dev

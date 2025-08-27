@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -28,13 +27,6 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "use_mock_hardware",
-            default_value="false",
-            description="Start robot with mock hardware mirroring command to its states.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
             "start_rviz",
             default_value="true",
             description="Start RViz2 automatically with this launch file.",
@@ -44,23 +36,7 @@ def generate_launch_description():
     # Initialize Arguments
     use_sim_time = LaunchConfiguration("use_sim_time")
     slam_config_file = LaunchConfiguration("slam_config_file")
-    use_mock_hardware = LaunchConfiguration("use_mock_hardware")
     start_rviz = LaunchConfiguration("start_rviz")
-
-    # Include robot bringup
-    robot_bringup = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([
-                FindPackageShare("navcar_bringup"),
-                "launch",
-                "navcar_bringup.launch.py",
-            ])
-        ]),
-        launch_arguments={
-            "use_mock_hardware": use_mock_hardware,
-            "start_rviz": "false",  # We'll start our own RViz with SLAM config
-        }.items(),
-    )
 
     # Cartographer SLAM node
     cartographer_node = Node(
@@ -84,7 +60,7 @@ def generate_launch_description():
     # Cartographer occupancy grid node
     occupancy_grid_node = Node(
         package="cartographer_ros",
-        executable="occupancy_grid_node",
+        executable="cartographer_occupancy_grid_node",
         name="occupancy_grid_node",
         output="screen",
         parameters=[{"use_sim_time": use_sim_time}],
@@ -107,7 +83,6 @@ def generate_launch_description():
     )
 
     nodes = [
-        robot_bringup,
         cartographer_node,
         occupancy_grid_node,
         rviz_node,

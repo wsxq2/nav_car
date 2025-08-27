@@ -1,0 +1,19 @@
+# Global colcon defaults for this workspace
+build:
+  cmake-args:
+    - "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+    # - "-DCMAKE_BUILD_TYPE=Debug"
+    # - "-DCMAKE_CXX_STANDARD=17"
+  symlink-install: true
+  # event-handlers:
+  #  - "console_cohesion+"
+
+test:
+  event-handlers:
+    - "console_direct+"
+  return-code-on-test-failure: true
+  packages-select:
+    - "swerve_drive_controller"
+
+test-result:
+  verbose: true

@@ -1,0 +1,8 @@
+<library path="navcar_hardware">
+  <class name="navcar_hardware/NavCarHardware" type="navcar_hardware::NavCarHardware" 
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      NavCar hardware interface for TCP communication with motor controllers
+    </description>
+  </class>
+</library>

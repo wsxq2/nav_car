@@ -1,0 +1,42 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50  # Hz
+
+    # Joint state broadcaster - broadcasts all joint states
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    # Base swerve drive controller
+    mobile_base_controller:
+      type: diff_drive_controller/DiffDriveController
+
+mobile_base_controller:
+  ros__parameters:
+    left_wheel_names: ["back_left_wheel_joint"]
+    right_wheel_names: ["back_right_wheel_joint"]
+    
+    wheel_separation: 0.446  # Distance between left and right wheels (m)
+    wheels_per_side: 1
+    wheel_radius: 0.16      # Wheel radius (m)
+    odom_frame_id: "odom"
+    base_frame_id: "base_footprint"
+    pose_covariance_diagonal: [0.01, 0.01, 0.001, 0.001, 0.001, 0.3]
+    twist_covariance_diagonal: [0.01, 0.01, 0.001, 0.001, 0.001, 0.3]
+    
+    # Velocity and acceleration limits for the robot
+    linear:
+      x:
+        has_velocity_limits    : true
+        max_velocity           : 1.2   # m/s
+        min_velocity           : -1.2  # m/s
+        has_acceleration_limits: true
+        max_acceleration       : 1.0   # m/s^2
+        min_acceleration       : -1.0  # m/s^2
+    angular:
+      z:
+        has_velocity_limits    : true
+        max_velocity           : 3.14   # rad/s
+        min_velocity           : -3.14  # rad/s
+        has_acceleration_limits: true
+        max_acceleration       : 3.14   # rad/s^2
+        min_acceleration       : -3.14  # rad/s^2

@@ -5,7 +5,7 @@
   <xacro:arg name="use_ros2_control" default="false" />
   <xacro:arg name="use_mock_hardware" default="true" />
 
-  <xacro:property name="package_name" value="nav_car_description"/>
+  <xacro:property name="package_name" value="navcar_description"/>
   <xacro:property name="robot_name" value="nav_car"/>
 
   <xacro:include filename="$(find ${package_name})/urdf/include/common_macros.urdf.xacro" />

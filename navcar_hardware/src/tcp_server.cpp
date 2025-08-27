@@ -51,29 +51,45 @@ bool TcpServer::start()
 
 void TcpServer::stop()
 {
+  log_info("Stopping TCP server...");
+  
   running_ = false;
   connected_ = false;
 
+  // Close sockets to unblock accept() and recv() calls
   if (client_socket_ != -1)
   {
+    shutdown(client_socket_, SHUT_RDWR);
     close(client_socket_);
     client_socket_ = -1;
   }
 
   if (server_socket_ != -1)
   {
+    shutdown(server_socket_, SHUT_RDWR);
     close(server_socket_);
     server_socket_ = -1;
   }
 
-  if (server_thread_.joinable())
-  {
-    server_thread_.join();
-  }
-
+  // Join threads with error handling
   if (client_thread_.joinable())
   {
-    client_thread_.join();
+    try {
+      client_thread_.join();
+    } catch (...) {
+      log_error("Exception during client thread join, detaching...");
+      client_thread_.detach();
+    }
+  }
+
+  if (server_thread_.joinable())
+  {
+    try {
+      server_thread_.join();
+    } catch (...) {
+      log_error("Exception during server thread join, detaching...");
+      server_thread_.detach();
+    }
   }
 
   log_info("TCP server stopped");

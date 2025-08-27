@@ -58,10 +58,8 @@ def generate_launch_description():
                                 namespace='',
                                 parameters=[driver_dir],
                                 )
-    return LaunchDescription([
+    return LaunchDescription(declared_arguments + [
         driver_node,
-        declared_arguments,
         navcar_control
-       
     ])
 

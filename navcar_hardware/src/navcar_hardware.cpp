@@ -110,8 +110,19 @@ hardware_interface::CallbackReturn NavCarHardware::on_deactivate(
 {
   RCLCPP_INFO(LOGGER, "Deactivating hardware interface...");
 
-  // Stop TCP server
-  tcp_server_->stop();
+  // Stop TCP server with timeout
+  if (tcp_server_)
+  {
+    try
+    {
+      tcp_server_->stop();
+      RCLCPP_INFO(LOGGER, "TCP server stopped successfully");
+    }
+    catch (const std::exception& e)
+    {
+      RCLCPP_WARN(LOGGER, "Exception during TCP server stop: %s", e.what());
+    }
+  }
 
   RCLCPP_INFO(LOGGER, "Hardware interface deactivated successfully");
   return hardware_interface::CallbackReturn::SUCCESS;

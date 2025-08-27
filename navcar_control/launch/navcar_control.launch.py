@@ -57,12 +57,15 @@ def generate_launch_description():
         "diffbot_control.yaml",
     ])
 
-    # Control node
+    # Control node - only pass controllers config, not robot_description
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[robot_description, robot_controllers],
+        parameters=[robot_controllers],
         output="both",
+        remappings=[
+            ("~/robot_description", "/robot_description"),
+        ],
     )
 
     robot_state_publisher_node = Node(

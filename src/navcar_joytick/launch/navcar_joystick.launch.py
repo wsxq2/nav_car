@@ -12,13 +12,6 @@ def generate_launch_description():
     declared_arguments = []
     declared_arguments.append(
         DeclareLaunchArgument(
-            "joy_config",
-            default_value="ps3",
-            description="Joystick configuration to use (ps3 or xbox)",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
             "joy_dev", 
             default_value="/dev/input/js0",
             description="Joystick device path",
@@ -33,14 +26,13 @@ def generate_launch_description():
     )
 
     # Initialize Arguments
-    joy_config = LaunchConfiguration("joy_config")
     joy_dev = LaunchConfiguration("joy_dev")
     cmd_vel_topic = LaunchConfiguration("cmd_vel_topic")
 
     # Joy node
     joy_node = Node(
-        package="joy",
-        executable="joy_node",
+        package="joy_linux",
+        executable="joy_linux_node",
         name="joystick",
         parameters=[
             {"device_name": joy_dev},
@@ -58,18 +50,8 @@ def generate_launch_description():
             PathJoinSubstitution([
                 FindPackageShare("navcar_joytick"),
                 "config",
-                [joy_config, "_config.yaml"]
-            ]),
-            {
-                "axis_linear.x": 1,
-                "axis_angular.yaw": 0, 
-                "scale_linear": 0.3,
-                "scale_linear_turbo": 0.6,
-                "scale_angular": 0.5,
-                "scale_angular_turbo": 1.0,
-                "enable_button": 4,  # L1/LB
-                "enable_turbo_button": 5,  # R1/RB
-            }
+                "ps3_config.yaml"
+            ])
         ],
         remappings=[
             ("cmd_vel", cmd_vel_topic),

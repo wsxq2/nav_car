@@ -58,8 +58,20 @@ def generate_launch_description():
                                 namespace='',
                                 parameters=[driver_dir],
                                 )
+
+    # Include navcar joystick launch
+    navcar_joystick = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare("navcar_joytick"),
+                "launch",
+                "navcar_joystick.launch.py",
+            ])
+        ])
+    )
+
     return LaunchDescription(declared_arguments + [
         driver_node,
-        navcar_control
-    ])
+        navcar_control,
+    ] + [navcar_joystick])
 

@@ -10,7 +10,7 @@
             "settings": {
                 "http.proxy": "http://192.168.3.107:7890",
                 "http.proxyStrictSSL": false,
-                "clangd.path": "/usr/local/bin/clangd",
+                "clangd.path": "/usr/bin/clangd",
                 "C_Cpp.intelliSenseEngine": "disabled",
                 "terminal.integrated.defaultProfile.linux": "bash",
                 "terminal.integrated.profiles.linux": {

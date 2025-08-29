@@ -59,6 +59,7 @@ void TcpServer::stop()
   // Close sockets to unblock accept() and recv() calls
   if (client_socket_ != -1)
   {
+    log_info("will shutdown client socket...");
     shutdown(client_socket_, SHUT_RDWR);
     close(client_socket_);
     client_socket_ = -1;
@@ -66,11 +67,13 @@ void TcpServer::stop()
 
   if (server_socket_ != -1)
   {
+    log_info("will shutdown server socket...");
     shutdown(server_socket_, SHUT_RDWR);
     close(server_socket_);
     server_socket_ = -1;
   }
 
+  log_info("joining client...");
   // Join threads with error handling
   if (client_thread_.joinable())
   {
@@ -82,6 +85,7 @@ void TcpServer::stop()
     }
   }
 
+  log_info("joining server...");
   if (server_thread_.joinable())
   {
     try {
@@ -238,7 +242,7 @@ void TcpServer::client_thread(int client_socket)
     }
 
     // Small delay to prevent busy waiting
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
 

@@ -28,7 +28,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "start_rviz",
-            default_value="true",
+            default_value="false",
             description="Start RViz2 automatically with this launch file.",
         )
     )
@@ -53,7 +53,7 @@ def generate_launch_description():
         ],
         remappings=[
             ("scan", "/scan"),
-            ("odom", "/odom"),
+            ("odom", "/mobile_base_controller/odom"),
         ],
     )
 

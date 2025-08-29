@@ -68,6 +68,12 @@ RUN apt-get update && apt-get install -y \
     ros-humble-diagnostic-updater \
     libpcap-dev \
     clangd \
+    joystick \
+    ros-humble-joy-linux \
+    ros-humble-teleop-twist-joy \
+    iproute2 \
+    command-not-found \
+    usbutils \
     && rm -rf /var/lib/apt/lists/*
     
 SHELL ["/bin/bash", "-c"]

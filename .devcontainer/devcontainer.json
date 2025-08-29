@@ -25,7 +25,8 @@
             "extensions": [
                 "ms-vscode.cmake-tools",
                 "ms-iot.vscode-ros",
-                "llvm-vs-code-extensions.vscode-clangd"
+                "llvm-vs-code-extensions.vscode-clangd",
+                "github.vscode-pull-request-github"
             ],
         },
     },

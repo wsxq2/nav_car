@@ -2,11 +2,14 @@ services:
   navcar-dev:
     build:
       context: .
-      dockerfile: Dockerfile.arm64
+      dockerfile: Dockerfile
       args:
         - PROXY_HOST=${PROXY_HOST:-host.docker.internal}
         - PROXY_PORT=${PROXY_PORT:-7890}
         - USER_UID=${USER_UID:-1000}
+      platforms: 
+        - linux/arm64
+        - linux/amd64
     image: navcar-dev:latest
     container_name: navcar-dev
     platform: linux/arm64

@@ -20,11 +20,15 @@ ENV no_proxy=localhost,127.0.0.1,::1,192.168.0.0/16
 RUN echo 'Asia/Shanghai' > /etc/timezone && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 # Update the apt sources to use Tsinghua University's mirror
-RUN <<EOF cat > /etc/apt/sources.list
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-updates main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-backports main restricted universe multiverse
-deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-security main restricted universe multiverse
+RUN <<EOF
+#!/bin/bash
+[[ $(uname -m) == x86_64 ]] && port_string="" || port_string="-ports"
+cat > /etc/apt/sources.list <<EOG
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu${port_string}/ jammy main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu${port_string}/ jammy-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu${port_string}/ jammy-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu${port_string}/ jammy-security main restricted universe multiverse
+EOG
 EOF
 
 # Add ROS 2 apt repository
@@ -67,17 +71,16 @@ RUN apt-get update && apt-get install -y \
     curl \
     ros-humble-diagnostic-updater \
     libpcap-dev \
+    clangd \
+    joystick \
+    ros-humble-joy-linux \
+    ros-humble-teleop-twist-joy \
+    iproute2 \
+    command-not-found \
+    usbutils \
     && rm -rf /var/lib/apt/lists/*
     
 SHELL ["/bin/bash", "-c"]
-
-# 安装最新版本的 clangd
-RUN CLANGD_VERSION=$(curl -s https://api.github.com/repos/clangd/clangd/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/') && \
-    curl -L -o /tmp/clangd-linux.zip "https://github.com/clangd/clangd/releases/download/${CLANGD_VERSION}/clangd-linux-${CLANGD_VERSION}.zip" && \
-    unzip /tmp/clangd-linux.zip -d /tmp/clangd-linux && \
-    cp -r /tmp/clangd-linux/*/{bin,lib} /usr/local && \
-    chmod +x /usr/local/bin/clangd && \
-    rm -rf /tmp/clangd-linux.zip /tmp/clangd-linux
 
 # 配置开发用户
 RUN groupadd --gid $USER_GID $USERNAME \

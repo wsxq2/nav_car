@@ -51,6 +51,7 @@ private:
   uint16_t calculate_crc16(const std::vector<uint8_t>& data) const;
   void log_info(const std::string& message) const;
   void log_error(const std::string& message) const;
+  void log_debug(const std::string& message) const;
 
   std::string host_;
   int port_;

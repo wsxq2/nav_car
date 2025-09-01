@@ -213,6 +213,14 @@ void TcpServer::client_thread(int client_socket)
 {
   MotorState state;
   
+  MotorCommand cmd{};
+  cmd.reset_odom = true;
+  
+  if(!send_command(client_socket, cmd))
+  {
+      log_error("Failed to send command to hardware");
+  }
+
   while (running_ && connected_)
   {
     // Try to receive status from hardware
@@ -255,6 +263,10 @@ bool TcpServer::send_command(int socket, const MotorCommand& command)
   // rpm to 0.001 rpm: rpm * 1000
   int32_t left_rpm_millis = static_cast<int32_t>(command.left_velocity * 60000.0 / (2.0 * M_PI));
   int32_t right_rpm_millis = static_cast<int32_t>(command.right_velocity * 60000.0 / (2.0 * M_PI));
+  
+  log_debug("Sending command: left_rpm_millis=" + std::to_string(left_rpm_millis) +
+           ", right_rpm_millis=" + std::to_string(right_rpm_millis) +
+           ", reset_odom=" + std::to_string(command.reset_odom));
 
   size_t offset = 0;
   
@@ -369,6 +381,9 @@ bool TcpServer::receive_state(int socket, MotorState& state)
                               (static_cast<int32_t>(frame[offset + 1]) << 16) |
                               (static_cast<int32_t>(frame[offset + 2]) << 8) |
                               static_cast<int32_t>(frame[offset + 3]);
+  log_debug("left_pos_millideg=" + std::to_string(left_pos_millideg) + 
+           ", right_pos_millideg=" + std::to_string(right_pos_millideg) + ", left_rpm_millis=" + std::to_string(left_rpm_millis) +
+           ", right_rpm_millis=" + std::to_string(right_rpm_millis));
   offset += 4;
   
   // Verify CRC16
@@ -428,6 +443,11 @@ void TcpServer::log_info(const std::string& message) const
 void TcpServer::log_error(const std::string& message) const
 {
   std::cerr << "[NavCar TCP] ERROR: " << message << std::endl;
+}
+
+void TcpServer::log_debug(const std::string& message) const
+{
+  std::cout << "[NavCar TCP] DEBUG: " << message << std::endl;
 }
 
 } // namespace navcar_hardware

@@ -9,7 +9,7 @@
     "customizations": {
         "vscode": {
             "settings": {
-                "http.proxy": "http://192.168.3.107:7890",
+                "http.proxy": "${localEnv:http_proxy}",
                 "http.proxyStrictSSL": false,
                 "clangd.path": "/usr/bin/clangd",
                 "C_Cpp.intelliSenseEngine": "disabled",

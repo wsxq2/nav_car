@@ -20,9 +20,18 @@
 
 ### 准备工作
 
-使用前请根据实际情况修改 `docker/.env` 文件。其中的 `USER_UID` 一定要修改为当前用户 ID，`PROXY_HOST` 和 `DISPLAY` 也要正确设置。
+使用前请根据实际情况修改 `docker/.env` 文件，如果没有则手动创建，内容如下：
 
-此外，`.devcontainer/devcontainer.json` 中也需要调整代理相关设置（默认是 "http://192.168.3.107:7890"）。
+```bash
+PROXY_HOST=192.168.3.107
+PROXY_PORT=7890
+DISPLAY=192.168.3.107:0.0
+USER_UID=1001
+```
+
+其中的 `USER_UID` 一定要修改为当前用户 ID（可使用`id`命令查看），其他变量也要正确设置。
+
+此外，务必确保在 `~/.bashrc` 中设置了 `http_proxy` 环境变量，因为 `.devcontainer/.devcontainer.json`中会用到该环境变量。
 
 ### 使用Docker构建和运行
 

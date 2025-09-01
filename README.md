@@ -1,76 +1,81 @@
 # NavCar ROS2 Package
 
-一个简单的ROS2导航车机器人包，包含描述文件和控制配置。
+一个完整的ROS2导航车机器人项目，包含机器人描述、控制、SLAM、激光雷达驱动等功能模块。
 
 ## 包结构
 
-- `nav_car`: 主包（元包）
+- `navcar_bringup`: 启动文件包
 - `navcar_description`: 机器人描述包，包含URDF/Xacro文件
 - `navcar_control`: 机器人控制包，包含ros2_control配置
+- `navcar_hardware`: 硬件接口包
+- `navcar_joytick`: 手柄控制包
+- `navcar_slam`: SLAM算法包（使用Cartographer）
+- `lidar_driver`: 激光雷达驱动包
 
-## 快速开始
+## Docker 开发环境
 
-### 构建工作空间
+本项目支持使用Docker容器进行开发，包含完整的ROS2开发环境。
+
+本项目支持 x86_64 和 ARM64 架构。在 ARM64 平台（如树莓派、Jetson）上运行时，Docker配置会自动适配。
+
+### 准备工作
+
+使用前请根据实际情况修改 `docker/.env` 文件。其中的 `USER_UID` 一定要修改为当前用户 ID，`PROXY_HOST` 和 `DISPLAY` 也要正确设置。
+
+### 使用Docker构建和运行
 
 ```bash
-cd /home/wsxq2/work/nav_car_ws
-colcon build
-source install/setup.bash
+# 构建Docker镜像
+cd docker
+docker compose build
+
+# 运行开发容器
+docker compose up -d
+
+# 进入容器
+docker compose exec navcar-dev bash
 ```
+
+### VS Code Dev Container
+
+项目配置了VS Code Dev Container，可直接在VS Code中打开容器环境进行开发：
+
+1. 安装 "Remote - Containers" 扩展
+2. 在VS Code中打开项目目录
+3. 选择 "Reopen in Container"
 
 ### 启动机器人
 
-#### 1. 仅在RViz中查看机器人模型
+#### 启动基础包
+
+```bash
+ros2 launch navcar_bringup bringup_with_laser.launch.py
+```
+
+这包括以下内容：
+
+- 启动摇杆手柄驱动包
+- 启动 ros2 control 包
+- 启动激光雷达驱动
+
+详见对应文件内容。
+
+#### 仅在RViz中查看机器人模型
 
 ```bash
 ros2 launch navcar_description nav_car_rviz.launch.py
 ```
 
-#### 2. 启动完整的控制系统
+#### 启动SLAM
+
+启动 SLAM 前要要先启动基础包。然后执行以下命令：
 
 ```bash
-ros2 launch navcar_control navcar_control.launch.py
-```
-
-或者使用主launch文件：
-
-```bash
-ros2 launch nav_car nav_car.launch.py
+ros2 launch navcar_slam slam.launch.py
 ```
 
 ### 控制机器人
 
-启动控制系统后，可以使用以下命令控制机器人：
+直接使用遥控手柄控制即可。
 
-```bash
-ros2 topic pub /mobile_base_controller/cmd_vel geometry_msgs/msg/Twist "
-linear:
-  x: 0.5
-  y: 0.0
-  z: 0.0
-angular:
-  x: 0.0
-  y: 0.0
-  z: 0.3"
-```
-
-### 查看关节状态
-
-```bash
-ros2 topic echo /joint_states
-```
-
-## 机器人参数
-
-- 轮距: 0.446m
-- 轮半径: 0.16m
-- 底盘尺寸: 0.69m × 0.315m × 0.102m
-
-## 依赖项
-
-确保已安装以下ROS2包：
-- ros2_control
-- ros2_controllers
-- diff_drive_controller
-- joint_state_broadcaster
-- robot_state_publisher
+需要先按住 L1，再拖动两个摇杆，左边控制前进后退，右边控制转向。

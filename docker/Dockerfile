@@ -83,6 +83,27 @@ RUN apt-get update && apt-get install -y \
     
 SHELL ["/bin/bash", "-c"]
 
+RUN <<EOF
+#!/bin/bash
+
+if [[ $(uname -m) == x86_64 ]]; then
+# 安装最新版本的 clangd
+CLANGD_VERSION=$(curl -s https://api.github.com/repos/clangd/clangd/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/') && \
+    curl -L -o /tmp/clangd-linux.zip "https://github.com/clangd/clangd/releases/download/${CLANGD_VERSION}/clangd-linux-${CLANGD_VERSION}.zip" && \
+    unzip /tmp/clangd-linux.zip -d /tmp/clangd-linux && \
+    cp -r /tmp/clangd-linux/*/{bin,lib} /usr/local && \
+    chmod +x /usr/local/bin/clangd && \
+    rm -rf /tmp/clangd-linux.zip /tmp/clangd-linux
+elif [[ $(uname -m) == aarch64 ]]; then
+# 安装 21.1.0 版本的 clangd
+curl -L -o /tmp/clangd.tar.gz "https://wsxq21.55555.io/clangd.tar.gz" && \
+    tar -xzf /tmp/clangd.tar.gz -C /tmp/ && \
+    cp -r /tmp/clangd/{bin,lib} /usr/local && \
+    chmod +x /usr/local/bin/clangd && \
+    rm -rf /tmp/clangd.tar.gz /tmp/clangd
+fi
+EOF
+
 # 配置开发用户
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \

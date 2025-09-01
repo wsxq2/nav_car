@@ -11,7 +11,7 @@
             "settings": {
                 "http.proxy": "${localEnv:http_proxy}",
                 "http.proxyStrictSSL": false,
-                "clangd.path": "/usr/bin/clangd",
+                "clangd.path": "/usr/local/bin/clangd",
                 "C_Cpp.intelliSenseEngine": "disabled",
                 "terminal.integrated.defaultProfile.linux": "bash",
                 "terminal.integrated.profiles.linux": {

@@ -22,6 +22,8 @@
 
 使用前请根据实际情况修改 `docker/.env` 文件。其中的 `USER_UID` 一定要修改为当前用户 ID，`PROXY_HOST` 和 `DISPLAY` 也要正确设置。
 
+此外，`.devcontainer/devcontainer.json` 中也需要调整代理相关设置（默认是 "http://192.168.3.107:7890"）。
+
 ### 使用Docker构建和运行
 
 ```bash

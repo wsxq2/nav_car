@@ -1,4 +1,11 @@
 services:
+  emulator:
+    image: tonistiigi/binfmt
+    container_name: emulator
+    privileged: true
+    command: --install qemu-aarch64
+    network_mode: bridge
+    restart: "no"
   navcar-dev:
     build:
       context: .

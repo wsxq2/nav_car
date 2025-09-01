@@ -1,7 +1,8 @@
+name: navcar-${USER}
 services:
   emulator:
     image: tonistiigi/binfmt
-    container_name: emulator
+    # container_name: emulator
     privileged: true
     command: --install linux/arm64
     network_mode: bridge
@@ -20,7 +21,7 @@ services:
         - linux/arm64
         - linux/amd64
     image: navcar-dev:latest
-    container_name: navcar-dev-${USER:-dev}-${USER_UID:-1000}
+    # container_name: navcar-dev-${USER:-dev}-${USER_UID:-1000}
     platform: linux/arm64
 
     # Enable GUI applications (for RViz, etc.)

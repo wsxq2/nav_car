@@ -121,7 +121,7 @@
   <joint name="${prefix}_laser_joint" type="fixed">
     <parent link="${parent_link}"/>
     <child link="${prefix}_laser_link"/>
-    <origin xyz="${sensor_prop['laser']['dx']} ${sensor_prop['laser']['dy']} ${sensor_prop['laser']['dz']}" rpy="0 0 ${pi}"/>
+    <origin xyz="${sensor_prop['laser']['dx']} ${sensor_prop['laser']['dy']} ${sensor_prop['laser']['dz']}" rpy="0 0 0"/>
     <axis xyz="0 1 0" />
   </joint>
 

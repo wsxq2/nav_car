@@ -5,6 +5,7 @@
     ],
     "service": "navcar-dev",
     "workspaceFolder": "/home/dev/workspace",
+    "shutdownAction": "stopCompose",
     "customizations": {
         "vscode": {
             "settings": {
@@ -27,7 +28,7 @@
                 "ms-iot.vscode-ros",
                 "llvm-vs-code-extensions.vscode-clangd",
                 "github.vscode-pull-request-github"
-            ],
-        },
-    },
+            ]
+        }
+    }
 }

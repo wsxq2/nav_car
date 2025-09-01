@@ -4,7 +4,7 @@ services:
     image: tonistiigi/binfmt
     # container_name: emulator
     privileged: true
-    command: --install linux/arm64
+    command: --install arm64
     network_mode: bridge
     restart: "no"
   navcar-dev:
@@ -19,7 +19,7 @@ services:
         - USER_UID=${USER_UID:-1000}
       platforms: 
         - linux/arm64
-        - linux/amd64
+        #- linux/amd64
     image: navcar-dev:latest
     # container_name: navcar-dev-${USER:-dev}-${USER_UID:-1000}
     platform: linux/arm64

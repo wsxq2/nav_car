@@ -78,6 +78,7 @@ RUN apt-get update && apt-get install -y \
     iproute2 \
     command-not-found \
     usbutils \
+    python3-colcon-clean \
     && rm -rf /var/lib/apt/lists/*
     
 SHELL ["/bin/bash", "-c"]
@@ -85,7 +86,7 @@ SHELL ["/bin/bash", "-c"]
 # 配置开发用户
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && usermod -aG sudo $USERNAME \
+    && usermod -aG sudo,input $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # 切换到开发用户

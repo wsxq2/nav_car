@@ -19,7 +19,7 @@ def save_map(map_name=None, convert_pgm=True):
         map_name = f"map_{timestamp}"
     
     # Create maps directory if it doesn't exist
-    maps_dir = os.path.expanduser("~/maps")
+    maps_dir = os.path.expanduser("./maps")
     os.makedirs(maps_dir, exist_ok=True)
     
     map_file_path = os.path.join(maps_dir, f"{map_name}.pbstream")

@@ -3,7 +3,7 @@ services:
     image: tonistiigi/binfmt
     container_name: emulator
     privileged: true
-    command: --install qemu-aarch64
+    command: --install linux/arm64
     network_mode: bridge
     restart: "no"
   navcar-dev:
@@ -18,9 +18,9 @@ services:
         - linux/arm64
         - linux/amd64
     image: navcar-dev:latest
-    container_name: navcar-dev
+    container_name: navcar-dev-${USER:-dev}-${USER_UID:-1000}
     platform: linux/arm64
-    
+
     # Enable GUI applications (for RViz, etc.)
     environment:
       - DISPLAY=${DISPLAY}

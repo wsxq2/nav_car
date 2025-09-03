@@ -447,7 +447,7 @@ void TcpServer::log_error(const std::string& message) const
 
 void TcpServer::log_debug(const std::string& message) const
 {
-  std::cout << "[NavCar TCP] DEBUG: " << message << std::endl;
+  //std::cout << "[NavCar TCP] DEBUG: " << message << std::endl;
 }
 
 } // namespace navcar_hardware

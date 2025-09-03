@@ -42,7 +42,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "start_rviz",
-            default_value="true",
+            default_value="false",
             description="Start RViz2 automatically with this launch file.",
         )
     )
@@ -53,21 +53,6 @@ def generate_launch_description():
     slam_config_file = LaunchConfiguration("slam_config_file")
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
     start_rviz = LaunchConfiguration("start_rviz")
-
-    # Include robot bringup
-    robot_bringup = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([
-                FindPackageShare("navcar_bringup"),
-                "launch",
-                "navcar_bringup.launch.py",
-            ])
-        ]),
-        launch_arguments={
-            "use_mock_hardware": use_mock_hardware,
-            "start_rviz": "false",
-        }.items(),
-    )
 
     # Cartographer localization node
     cartographer_node = Node(
@@ -86,9 +71,20 @@ def generate_launch_description():
         ],
         remappings=[
             ("scan", "/scan"),
-            ("odom", "/odom"),
+            ("odom", "/mobile_base_controller/odom"),
         ],
     )
+
+    # Cartographer occupancy grid node
+    occupancy_grid_node = Node(
+        package="cartographer_ros",
+        executable="cartographer_occupancy_grid_node",
+        name="occupancy_grid_node",
+        output="screen",
+        parameters=[{"use_sim_time": use_sim_time}],
+        arguments=["-resolution", "0.05"],
+    )
+
 
     # RViz node
     rviz_config_file = PathJoinSubstitution([
@@ -106,8 +102,8 @@ def generate_launch_description():
     )
 
     nodes = [
-        robot_bringup,
         cartographer_node,
+        occupancy_grid_node,
         rviz_node,
     ]
 

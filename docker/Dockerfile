@@ -52,16 +52,6 @@ RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
     python3-vcstool \
     build-essential \
-    ros-humble-cartographer \
-    ros-humble-cartographer-ros \
-    ros-humble-ros2-control \
-    ros-humble-ros2-controllers \
-    ros-humble-ros2controlcli \
-    ros-humble-rviz2 \
-    ros-humble-xacro \
-    ros-humble-robot-state-publisher \
-    ros-humble-joint-state-publisher \
-    ros-humble-rosidl-default-generators \
     sudo \
     locales \
     && rm -rf /var/lib/apt/lists/*
@@ -69,15 +59,9 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get install -y \
     unzip \
     curl \
-    ros-humble-diagnostic-updater \
     libpcap-dev \
-    clangd \
-    joystick \
-    ros-humble-joy-linux \
-    ros-humble-teleop-twist-joy \
     iproute2 \
     command-not-found \
-    usbutils \
     python3-colcon-clean \
     && rm -rf /var/lib/apt/lists/*
     

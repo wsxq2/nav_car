@@ -91,7 +91,7 @@ EOF
 # 配置开发用户
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && usermod -aG sudo,input $USERNAME \
+    && usermod -aG sudo $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # 切换到开发用户
@@ -111,7 +111,9 @@ git clone https://github.com/wsxq2/nav_car.git ${MY_WORKSPACE}
 cd ${MY_WORKSPACE}
 sudo apt-get update
 rosdep install --from-paths src --ignore-src -r -y
-sudo rm -rf /var/lib/apt/lists/*
+# sudo rm -rf /var/lib/apt/lists/*
+# for using joystick
+sudo usermod -aG input $USERNAME
 rm -rf ${MY_WORKSPACE}
 EOF
 

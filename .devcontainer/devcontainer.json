@@ -4,7 +4,7 @@
         "../docker/docker-compose.yaml"
     ],
     "service": "navcar-dev",
-    "workspaceFolder": "/home/dev/workspace",
+    "workspaceFolder": "/home/dev/nav_car",
     "shutdownAction": "stopCompose",
     "customizations": {
         "vscode": {

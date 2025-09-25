@@ -34,7 +34,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
 
-      - ../:/home/dev/workspace:rw
+      - ../:/home/dev/nav_car:rw
     devices:
       - /dev/input/js0:/dev/input/js0  # Map the joystick device
       - /dev/input/event1:/dev/input/event1

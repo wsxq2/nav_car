@@ -112,7 +112,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 # 切换到开发用户
 USER $USERNAME
-ENV MY_WORKSPACE=/home/$USERNAME/workspace 
+ENV MY_WORKSPACE=/home/$USERNAME/nav_car 
 WORKDIR $MY_WORKSPACE
 
 # 下载个人配置文件

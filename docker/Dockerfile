@@ -118,6 +118,19 @@ WORKDIR $MY_WORKSPACE
 # 下载个人配置文件
 RUN git clone https://github.com/wsxq2/profile.git ~/.MyProfile && cd ~/.MyProfile && ./deploy.sh ${PROXY_HOST}
 
+# 使用 rosdep 安装项目所需的依赖
+RUN rosdep update
+RUN <<EOF
+#!/bin/bash
+set -exu
+git clone https://github.com/wsxq2/nav_car.git ${MY_WORKSPACE}
+cd ${MY_WORKSPACE}
+sudo apt-get update
+rosdep install --from-paths src --ignore-src -r -y
+sudo rm -rf /var/lib/apt/lists/*
+rm -rf ${MY_WORKSPACE}
+EOF
+
 # Set up environment
 RUN echo "source ${MY_WORKSPACE}/install/setup.bash" >> ~/.bashrc
 

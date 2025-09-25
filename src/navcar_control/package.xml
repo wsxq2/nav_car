@@ -11,8 +11,6 @@
   
   <depend>ros2_control</depend>
   <depend>ros2_controllers</depend>
-  <depend>controller_manager</depend>
-  <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   

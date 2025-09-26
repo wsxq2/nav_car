@@ -62,14 +62,14 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_nav2_bringup, 'launch', 'bringup_launch.py')
         ),
-        launch_arguments={
-            'namespace': namespace,
-            'use_sim_time': use_sim_time,
-            'map': map_yaml_file,
-            'params_file': params_file,
-            'default_nav_to_pose_bt_xml': default_nav_to_pose_bt_xml,
-            'default_nav_through_poses_bt_xml': default_nav_through_poses_bt_xml,
-        }.items()
+        launch_arguments=[
+            ('namespace', namespace),
+            ('use_sim_time', use_sim_time),
+            ('map', map_yaml_file),
+            ('params_file', params_file),
+            ('default_nav_to_pose_bt_xml', default_nav_to_pose_bt_xml),
+            ('default_nav_through_poses_bt_xml', default_nav_through_poses_bt_xml),
+        ]
     )
 
     # Create the launch description and populate

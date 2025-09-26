@@ -27,7 +27,8 @@
                 "ms-vscode.cmake-tools",
                 "ms-iot.vscode-ros",
                 "llvm-vs-code-extensions.vscode-clangd",
-                "github.vscode-pull-request-github"
+                "github.vscode-pull-request-github",
+                "ngtystr.ppm-pgm-viewer-for-vscode"
             ]
         }
     }

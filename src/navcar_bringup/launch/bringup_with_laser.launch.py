@@ -48,7 +48,7 @@ def generate_launch_description():
     )
 
     # Lidar driver node
-    driver_dir = os.path.join(get_package_share_directory('lslidar_driver'), 'params', 'lidar_net_ros2','lsm10_net.yaml')
+    driver_dir = os.path.join(get_package_share_directory('navcar_lidar'), 'config', 'lsm10_net.yaml')
                      
     driver_node = LifecycleNode(package='lslidar_driver',
                                 executable='lslidar_driver_node',

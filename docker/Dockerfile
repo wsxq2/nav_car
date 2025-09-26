@@ -107,7 +107,7 @@ RUN rosdep update
 RUN <<EOF
 #!/bin/bash
 set -exu
-git clone https://github.com/wsxq2/nav_car.git ${MY_WORKSPACE}
+git clone --recurse-submodules https://github.com/wsxq2/nav_car.git ${MY_WORKSPACE}
 cd ${MY_WORKSPACE}
 sudo apt-get update
 rosdep install --from-paths src --ignore-src -r -y

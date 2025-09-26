@@ -60,11 +60,11 @@ ros2 launch navcar_bringup navcar_bringup.launch.py use_mock_hardware:=false
 启动后，可以通过以下话题控制机器人：
 ```bash
 # 发送速度命令
-ros2 topic pub /mobile_base_controller/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.5}, angular: {z: 0.0}}"
+ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.5}, angular: {z: 0.0}}"
 
 # 查看关节状态
 ros2 topic echo /joint_states
 
 # 查看里程计信息
-ros2 topic echo /mobile_base_controller/odom
+ros2 topic echo /odom
 ```

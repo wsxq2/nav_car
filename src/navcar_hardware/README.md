@@ -45,7 +45,7 @@ ros2 launch navcar_hardware test_hardware.launch.py use_mock_hardware:=false
 
 3. 发送速度命令:
 ```bash
-ros2 topic pub /mobile_base_controller/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.1}, angular: {z: 0.0}}"
+ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.1}, angular: {z: 0.0}}"
 ```
 
 ## 故障排除

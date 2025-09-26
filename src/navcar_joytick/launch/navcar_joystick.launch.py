@@ -20,7 +20,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "cmd_vel_topic",
-            default_value="/mobile_base_controller/cmd_vel",
+            default_value="/cmd_vel",
             description="Command velocity topic name",
         )
     )

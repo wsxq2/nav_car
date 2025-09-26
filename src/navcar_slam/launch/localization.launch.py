@@ -71,7 +71,7 @@ def generate_launch_description():
         ],
         remappings=[
             ("scan", "/scan"),
-            ("odom", "/mobile_base_controller/odom"),
+            ("odom", "/odom"),
         ],
     )
 

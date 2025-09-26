@@ -46,3 +46,4 @@ mobile_base_controller:
         has_acceleration_limits: true
         max_acceleration       : 3.14   # rad/s^2
         min_acceleration       : -3.14  # rad/s^2
+    use_stamped_vel: false

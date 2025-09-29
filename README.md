@@ -4,6 +4,12 @@
 
 详见 [ROS2 建图和导航实战 \| 小强的博客](https://wsxq2.55555.io/blog/2025/09/02/ROS2%E5%BB%BA%E5%9B%BE%E5%92%8C%E5%AF%BC%E8%88%AA%E5%AE%9E%E6%88%98/)
 
+由于本项目使用了其他 repo，故在一般的 git clone 后还需要执行以下操作：
+
+```
+git submodule update --init
+```
+
 ## 包结构
 
 - `navcar_bringup`: 启动文件包

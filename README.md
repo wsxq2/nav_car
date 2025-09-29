@@ -93,6 +93,16 @@ ros2 launch navcar_description nav_car_rviz.launch.py
 ros2 launch navcar_slam slam.launch.py
 ```
 
+#### 启动导航
+
+启动导航前要要先启动基础包。然后执行以下命令：
+
+```bash
+ros2 launch navcar_navigation navigation_launch.py map:=/home/dev/nav_car/maps/map_20250901_141121.yaml 
+```
+
+其中使用的地图是之前 SLAM 时建立的地图。
+
 ### 控制机器人
 
 直接使用遥控手柄控制即可。
